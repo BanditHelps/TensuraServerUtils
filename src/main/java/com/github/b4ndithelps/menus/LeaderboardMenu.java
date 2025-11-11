@@ -120,7 +120,7 @@ public class LeaderboardMenu extends ChestMenu {
 
 		// Others into rows 1..4 (slots 9..44)
 		int pageSize = 3 * 9;
-		int othersStartIndex = 4;
+		int othersStartIndex = 3;
 		int totalOthers = Math.max(0, entries.size() - othersStartIndex);
 		int totalPages = Math.max(1, (int) Math.ceil(totalOthers / (double) pageSize));
 		int page = Math.min(currentPage, totalPages - 1);

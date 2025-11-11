@@ -7,6 +7,8 @@ import com.github.manasmods.tensura.race.Race;
 import com.github.manasmods.tensura.registry.race.TensuraRaces;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -28,8 +30,18 @@ public class LeaderboardCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
 				Commands.literal("leaderboard")
-						.executes(LeaderboardCommand::openLeaderboardFromOnlinePlayers)
+						.executes(LeaderboardCommand::openLeaderboardFromCache)
+						.then(Commands.literal("test")
+								.requires(source -> source.hasPermission(2))
+								.then(Commands.literal("add")
+										.then(Commands.argument("name", StringArgumentType.word())
+												.then(Commands.argument("ep", DoubleArgumentType.doubleArg(0))
+														.executes(LeaderboardCommand::addTestEntry))))
+								.then(Commands.literal("remove")
+										.then(Commands.argument("name", StringArgumentType.word())
+												.executes(LeaderboardCommand::removeTestEntry))))
 						.then(Commands.literal("debug")
+								.requires(source -> source.hasPermission(2))
 								.then(Commands.argument("count", IntegerArgumentType.integer(1, 500))
 										.executes(ctx -> openLeaderboardDebug(ctx, IntegerArgumentType.getInteger(ctx, "count"))))
 								.executes(ctx -> openLeaderboardDebug(ctx, 60))
@@ -37,16 +49,18 @@ public class LeaderboardCommand {
         );
     }
 
-	private static int openLeaderboardFromOnlinePlayers(CommandContext<CommandSourceStack> context) {
+	private static int openLeaderboardFromCache(CommandContext<CommandSourceStack> context) {
         try {
             ServerPlayer sender = context.getSource().getPlayerOrException();
-			ServerLevel level = sender.getLevel();
 
-			List<LeaderboardMenu.Entry> entries = new ArrayList<>();
-			for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) {
-				double ep = TensuraEPCapability.getFrom(p).map(d -> d.getEP()).orElse(0.0);
-				Race race = TensuraPlayerCapability.getFrom(p).map(d -> d.getRace()).orElse(TensuraRaces.HUMAN.get());
-				entries.add(new LeaderboardMenu.Entry(p.getGameProfile().getName(), p.getUUID(), ep, race));
+			List<LeaderboardMenu.Entry> entries = new ArrayList<>(LeaderboardCache.getSnapshot());
+			if (entries.isEmpty()) {
+				ServerLevel level = sender.getLevel();
+				for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) {
+					double ep = TensuraEPCapability.getFrom(p).map(d -> d.getEP()).orElse(0.0);
+					Race race = TensuraPlayerCapability.getFrom(p).map(d -> d.getRace()).orElse(TensuraRaces.HUMAN.get());
+					entries.add(new LeaderboardMenu.Entry(p.getGameProfile().getName(), p.getUUID(), ep, race));
+				}
 			}
 
 			// Sort desc to ensure consistent display order
@@ -72,6 +86,38 @@ public class LeaderboardCommand {
 			entries.sort(Comparator.comparingDouble((LeaderboardMenu.Entry e) -> e.ep).reversed());
 			openMenu(sender, entries);
 			return 1;
+		} catch (Exception e) {
+			context.getSource().sendFailure(Component.literal("Error: " + e.getMessage()));
+			return 0;
+		}
+	}
+
+	private static int addTestEntry(CommandContext<CommandSourceStack> context) {
+		try {
+			String name = StringArgumentType.getString(context, "name");
+			double ep = DoubleArgumentType.getDouble(context, "ep");
+			LeaderboardCache.putTestEntry(name, ep);
+			LeaderboardCache.saveToDisk(context.getSource().getServer());
+			context.getSource().sendSuccess(Component.literal("Added test entry: " + name + " with EP " + ep), true);
+			return 1;
+		} catch (Exception e) {
+			context.getSource().sendFailure(Component.literal("Error: " + e.getMessage()));
+			return 0;
+		}
+	}
+
+	private static int removeTestEntry(CommandContext<CommandSourceStack> context) {
+		try {
+			String name = StringArgumentType.getString(context, "name");
+			boolean removed = LeaderboardCache.removeTestEntry(name);
+			if (removed) {
+				LeaderboardCache.saveToDisk(context.getSource().getServer());
+				context.getSource().sendSuccess(Component.literal("Removed test entry: " + name), true);
+				return 1;
+			} else {
+				context.getSource().sendFailure(Component.literal("No test entry found for name: " + name));
+				return 0;
+			}
 		} catch (Exception e) {
 			context.getSource().sendFailure(Component.literal("Error: " + e.getMessage()));
 			return 0;

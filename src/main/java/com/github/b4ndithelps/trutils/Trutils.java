@@ -2,6 +2,7 @@ package com.github.b4ndithelps.trutils;
 
 import com.github.b4ndithelps.menus.LeaderboardScreen;
 import com.github.b4ndithelps.menus.ModMenus;
+import com.github.b4ndithelps.commands.LeaderboardCache;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
@@ -44,6 +45,8 @@ public class Trutils {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("TensuraServerUtils Starting...");
+		LeaderboardCache.loadFromDisk(event.getServer());
+		LeaderboardCache.refresh(event.getServer());
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
