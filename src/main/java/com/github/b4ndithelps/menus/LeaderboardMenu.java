@@ -1,7 +1,6 @@
 package com.github.b4ndithelps.menus;
 
 import com.github.b4ndithelps.commands.LeaderboardUtil;
-import com.github.manasmods.tensura.race.Race;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -158,13 +157,19 @@ public class LeaderboardMenu extends ChestMenu {
 		public final String name;
 		public final UUID uuid;
 		public final double ep;
-		public final Race race;
+		public final String race;
+		public final int uniqueCount;
+		public final boolean isDemonLord;
+		public final boolean isTrueHero;
 
-		public Entry(String name, UUID uuid, double ep, Race race) {
+		public Entry(String name, UUID uuid, double ep, String race, int uniqueCount, boolean isDemonLord, boolean isTrueHero) {
 			this.name = name;
 			this.uuid = uuid;
 			this.ep = ep;
 			this.race = race;
+			this.uniqueCount = uniqueCount;
+			this.isDemonLord = isDemonLord;
+			this.isTrueHero = isTrueHero;
 		}
 	}
 }

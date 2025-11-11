@@ -32,7 +32,11 @@ public class LeaderboardSavedData extends SavedData {
 				UUID uuid = e.hasUUID("uuid") ? e.getUUID("uuid") : UUID.fromString(e.getString("uuid_str"));
 				String name = e.getString("name");
 				double ep = e.getDouble("ep");
-				data.records.put(uuid, new PlayerRecord(name, ep));
+				String race = e.getString("race");
+				int uniqueCount = e.getInt("uniqueCount");
+				boolean isDemonLord = e.getBoolean("isDemonLord");
+				boolean isTrueHero = e.getBoolean("isTrueHero");
+				data.records.put(uuid, new PlayerRecord(name, ep, race, uniqueCount, isDemonLord, isTrueHero));
 			} catch (Exception ignored) {
 			}
 		}
@@ -47,6 +51,10 @@ public class LeaderboardSavedData extends SavedData {
 			e.putUUID("uuid", entry.getKey());
 			e.putString("name", entry.getValue().name);
 			e.putDouble("ep", entry.getValue().ep);
+			e.putString("race", entry.getValue().race);
+			e.putInt("uniqueCount", entry.getValue().uniqueCount);
+			e.putBoolean("isDemonLord", entry.getValue().isDemonLord);
+			e.putBoolean("isTrueHero", entry.getValue().isTrueHero);
 			list.add(e);
 		}
 		tag.put("entries", list);
@@ -78,7 +86,7 @@ public class LeaderboardSavedData extends SavedData {
 
 		this.records.clear();
 		for (Map.Entry<UUID, LeaderboardMenu.Entry> e : cache.entrySet()) {
-			this.records.put(e.getKey(), new PlayerRecord(e.getValue().name, e.getValue().ep));
+			this.records.put(e.getKey(), new PlayerRecord(e.getValue().name, e.getValue().ep, e.getValue().race, e.getValue().uniqueCount, e.getValue().isDemonLord, e.getValue().isTrueHero));
 		}
 		setDirty();
 	}
@@ -86,12 +94,18 @@ public class LeaderboardSavedData extends SavedData {
 	public static class PlayerRecord {
 		public final String name;
 		public final double ep;
+		public final String race;
+		public final int uniqueCount;
+		public final boolean isDemonLord;
+		public final boolean isTrueHero;
 
-		public PlayerRecord(String name, double ep) {
+		public PlayerRecord(String name, double ep, String race, int uniqueCount, boolean isDemonLord, boolean isTrueHero) {
 			this.name = name;
 			this.ep = ep;
+			this.race = race;
+			this.uniqueCount = uniqueCount;
+			this.isDemonLord = isDemonLord;
+			this.isTrueHero = isTrueHero;
 		}
 	}
 }
-
-

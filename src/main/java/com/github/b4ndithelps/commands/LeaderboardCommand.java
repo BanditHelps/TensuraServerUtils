@@ -1,7 +1,12 @@
 package com.github.b4ndithelps.commands;
 
 import com.github.b4ndithelps.menus.LeaderboardMenu;
+import com.github.manasmods.manascore.api.skills.ManasSkillInstance;
+import com.github.manasmods.manascore.api.skills.SkillAPI;
+import com.github.manasmods.tensura.ability.skill.Skill;
+import com.github.manasmods.tensura.capability.ep.ITensuraEPCapability;
 import com.github.manasmods.tensura.capability.ep.TensuraEPCapability;
+import com.github.manasmods.tensura.capability.race.ITensuraPlayerCapability;
 import com.github.manasmods.tensura.capability.race.TensuraPlayerCapability;
 import com.github.manasmods.tensura.race.Race;
 import com.github.manasmods.tensura.registry.race.TensuraRaces;
@@ -21,10 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.MenuProvider;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class LeaderboardCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -58,8 +60,27 @@ public class LeaderboardCommand {
 				ServerLevel level = sender.getLevel();
 				for (ServerPlayer p : level.getServer().getPlayerList().getPlayers()) {
 					double ep = TensuraEPCapability.getFrom(p).map(d -> d.getEP()).orElse(0.0);
-					Race race = TensuraPlayerCapability.getFrom(p).map(d -> d.getRace()).orElse(TensuraRaces.HUMAN.get());
-					entries.add(new LeaderboardMenu.Entry(p.getGameProfile().getName(), p.getUUID(), ep, race));
+					boolean isDemonLord = TensuraPlayerCapability.getFrom(p).map(ITensuraPlayerCapability::isTrueDemonLord).orElse(false);
+					boolean isTrueHero = TensuraPlayerCapability.getFrom(p).map(ITensuraPlayerCapability::isTrueHero).orElse(false);
+
+					Race race = TensuraPlayerCapability.getFrom(p).map(ITensuraPlayerCapability::getRace).orElse(TensuraRaces.HUMAN.get());
+					String raceName = Component.translatable(race.getNameTranslationKey()).getString();
+
+					// Count all the unique skills
+					Collection<ManasSkillInstance> skills = SkillAPI.getSkillsFrom(p).getLearnedSkills();
+					int uniqueCount = 0;
+					for (ManasSkillInstance skill : skills) {
+						if (skill.getSkill() instanceof Skill skill1) {
+							if (skill1.getType().equals(Skill.SkillType.UNIQUE)) {
+								uniqueCount++;
+							}
+						}
+					}
+
+					// Check to see if they are "named" if so, use that name, otherwise their default player name
+					String name = TensuraEPCapability.getFrom(p).map(ITensuraEPCapability::getName).orElse(p.getGameProfile().getName());
+
+					entries.add(new LeaderboardMenu.Entry(name, p.getUUID(), ep, raceName, uniqueCount, isDemonLord, isTrueHero));
 				}
 			}
 
@@ -80,8 +101,8 @@ public class LeaderboardCommand {
 			for (int i = 1; i <= count; i++) {
 				double ep = Math.max(1, (count - i + 1) * 1000L);
 				String name = "Player" + i;
-				Race race = TensuraRaces.HUMAN.get();
-				entries.add(new LeaderboardMenu.Entry(name, new UUID(0L, i), ep, race));
+				String race = Component.translatable(TensuraRaces.HUMAN.get().getNameTranslationKey()).getString();
+				entries.add(new LeaderboardMenu.Entry(name, new UUID(0L, i), ep, race, 0, false, false));
 			}
 			entries.sort(Comparator.comparingDouble((LeaderboardMenu.Entry e) -> e.ep).reversed());
 			openMenu(sender, entries);

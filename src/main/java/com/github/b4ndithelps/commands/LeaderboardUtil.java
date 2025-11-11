@@ -1,7 +1,6 @@
 package com.github.b4ndithelps.commands;
 
 import com.github.b4ndithelps.menus.LeaderboardMenu;
-import com.github.manasmods.tensura.race.Race;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -15,7 +14,14 @@ public class LeaderboardUtil {
 	public static ItemStack createHead(LeaderboardMenu.Entry entry, int place) {
 		ItemStack stack = new ItemStack(Items.PLAYER_HEAD);
 		// Display name with place
-		Component name = Component.literal("#" + place + " " + entry.name);
+		Component name;
+		if (entry.isDemonLord) {
+			name = Component.literal("#" + place + " " + entry.name).withStyle(ChatFormatting.DARK_PURPLE);
+		} else if (entry.isTrueHero) {
+			name = Component.literal("#" + place + " " + entry.name).withStyle(ChatFormatting.GOLD);
+		} else {
+			name = Component.literal("#" + place + " " + entry.name).withStyle(ChatFormatting.YELLOW);
+		}
 		stack.setHoverName(name);
 		// Owner (by name if available)
 		CompoundTag tag = stack.getOrCreateTag();
@@ -31,8 +37,14 @@ public class LeaderboardUtil {
 						.append(Component.literal(formatEp(entry.ep)).withStyle(ChatFormatting.AQUA))
 		)));
 		lore.add(StringTag.valueOf(Component.Serializer.toJson(
-				Component.translatable(formatRace(entry.race)).withStyle(ChatFormatting.GOLD))
-		));
+				Component.literal("Uniques: ")
+						.withStyle(Style.EMPTY.withColor(ChatFormatting.GRAY))
+						.append(Component.literal((String.valueOf(entry.uniqueCount))).withStyle(ChatFormatting.RED))
+		)));
+
+		lore.add(StringTag.valueOf(Component.Serializer.toJson(
+				Component.literal(entry.race).withStyle(ChatFormatting.GREEN)
+		)));
 		display.put("Lore", lore);
 		return stack;
 	}
@@ -43,10 +55,4 @@ public class LeaderboardUtil {
 		if (ep >= 1_000) return String.format("%.1fk", ep / 1_000d);
 		return String.format("%.0f", ep);
 	}
-
-	private static String formatRace(Race race) {
-		return race.getNameTranslationKey();
-	}
 }
-
-
