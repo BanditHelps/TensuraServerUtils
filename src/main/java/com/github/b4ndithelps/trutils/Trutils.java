@@ -1,10 +1,12 @@
 package com.github.b4ndithelps.trutils;
 
+import com.github.b4ndithelps.gamerules.ModGameRules;
 import com.github.b4ndithelps.menus.LeaderboardScreen;
 import com.github.b4ndithelps.menus.ModMenus;
 import com.github.b4ndithelps.commands.LeaderboardCache;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -26,6 +28,9 @@ public class Trutils {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
+	// GameRule to control skipping Tensura's first login flow
+	public static GameRules.Key<GameRules.BooleanValue> DISABLE_TENSURA_FIRST_LOGIN;
+
     public Trutils() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -33,11 +38,16 @@ public class Trutils {
         modEventBus.addListener(this::commonSetup);
         ModMenus.register(modEventBus);
 
+
+
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(() ->
+                ModGameRules.registerGameRules());
+
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
