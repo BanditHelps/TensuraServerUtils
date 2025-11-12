@@ -1,5 +1,6 @@
 package com.github.b4ndithelps.menus;
 
+import com.github.b4ndithelps.trutils.Trutils;
 import com.github.manasmods.tensura.ability.TensuraSkill;
 import com.github.manasmods.tensura.menu.RaceSelectionMenu;
 import com.github.manasmods.tensura.race.Race;
@@ -331,14 +332,19 @@ public class RaceSlotMachineMenu extends ChestMenu {
 	}
 
 	private void applyRaceAndClose(Player player, Race race) {
+		Trutils.LOGGER.info("attempting apply");
 		if (!(player instanceof ServerPlayer sp)) {
+			Trutils.LOGGER.info("bad player");
 			return;
 		}
-		try {
-			RaceSelectionMenu.setRace(sp, race, true, false);
+//		try {
+			Trutils.LOGGER.info("gonna try setting race");
+			RaceSelectionMenu.setRace(sp, race, true, true);
+			Trutils.LOGGER.info("gonna try granting resistances");
 			RaceSelectionMenu.grantLearningResistance(sp);
-		} catch (Exception ignored) {
-		}
+//		} catch (Exception ignored) {
+//			Trutils.LOGGER.error("something went terribly wrong: " + ignored.getMessage() + "  " + ignored.getCause());
+//		}
 		phase = Phase.DONE;
 		sp.closeContainer();
 	}

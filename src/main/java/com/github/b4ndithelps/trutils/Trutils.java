@@ -29,9 +29,6 @@ public class Trutils {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-	// GameRule to control skipping Tensura's first login flow
-	public static GameRules.Key<GameRules.BooleanValue> DISABLE_TENSURA_FIRST_LOGIN;
-
     public Trutils() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
@@ -43,6 +40,7 @@ public class Trutils {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        LOGGER.info("Loading Complete!");
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

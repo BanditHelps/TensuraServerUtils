@@ -1,3 +1,4 @@
 {
-  "gamerule.forceRandomRace": "Force random race at start"
+  "gamerule.forceRandomRace": "Force random race at start",
+  "gamerule.gachaMode": "Enable gacha race select"
 }

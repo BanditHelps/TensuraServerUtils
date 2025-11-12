@@ -16,6 +16,7 @@ public class RaceGachaCommand {
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(
 				Commands.literal("racegacha")
+						.requires(source -> source.hasPermission(2))
 						.executes(ctx -> {
 							ServerPlayer sender = ctx.getSource().getPlayerOrException();
 							open(sender);
