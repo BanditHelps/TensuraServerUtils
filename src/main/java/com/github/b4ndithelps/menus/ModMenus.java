@@ -14,6 +14,9 @@ public class ModMenus {
     public static final RegistryObject<MenuType<LeaderboardMenu>> LEADERBOARD_MENU = MENUS.register("leaderboard_menu",
             () -> IForgeMenuType.create((id, inv, buf) -> new LeaderboardMenu(id, inv)));
 
+    public static final RegistryObject<MenuType<RaceSlotMachineMenu>> RACE_SLOT_MACHINE_MENU = MENUS.register("race_slot_machine_menu",
+            () -> IForgeMenuType.create((id, inv, buf) -> new RaceSlotMachineMenu(id, inv)));
+
     public static void register(IEventBus bus) {
         MENUS.register(bus);
     }

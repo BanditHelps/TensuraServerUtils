@@ -2,6 +2,7 @@ package com.github.b4ndithelps.trutils;
 
 import com.github.b4ndithelps.gamerules.ModGameRules;
 import com.github.b4ndithelps.menus.LeaderboardScreen;
+import com.github.b4ndithelps.menus.RaceSlotMachineScreen;
 import com.github.b4ndithelps.menus.ModMenus;
 import com.github.b4ndithelps.commands.LeaderboardCache;
 import com.mojang.logging.LogUtils;
@@ -67,6 +68,7 @@ public class Trutils {
         public static void onClientSetup(FMLClientSetupEvent event) {
             event.enqueueWork(() -> {
                 MenuScreens.register(ModMenus.LEADERBOARD_MENU.get(), LeaderboardScreen::new);
+                MenuScreens.register(ModMenus.RACE_SLOT_MACHINE_MENU.get(), RaceSlotMachineScreen::new);
             });
         }
     }

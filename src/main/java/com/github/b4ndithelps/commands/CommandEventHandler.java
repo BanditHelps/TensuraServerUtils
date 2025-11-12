@@ -10,5 +10,6 @@ public class CommandEventHandler {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         LeaderboardCommand.register(event.getDispatcher());
+		RaceGachaCommand.register(event.getDispatcher());
     }
 }
