@@ -40,5 +40,3 @@ public class RaceGachaCommand {
 		player.openMenu(provider);
 	}
 }
-
-
