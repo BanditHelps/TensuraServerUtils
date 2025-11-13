@@ -35,7 +35,6 @@ public class TensuraPlayerCapabilityMixin {
 		cancellable = true
 	)
 	private static void trutils$maybeEarlyExitFirstLogin(Player entity, CallbackInfo ci) {
-		System.out.println("Why this shit not working");
 		if (entity instanceof ServerPlayer player && player.getServer() != null) {
 			boolean forceRandom = player.getServer().getGameRules().getBoolean(ModGameRules.FORCE_RANDOM_RACE);
 			boolean gachaMode = player.getServer().getGameRules().getBoolean(ModGameRules.GACHA_MODE);

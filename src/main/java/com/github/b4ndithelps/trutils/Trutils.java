@@ -1,6 +1,7 @@
 package com.github.b4ndithelps.trutils;
 
 import com.github.b4ndithelps.gamerules.ModGameRules;
+import com.github.b4ndithelps.trutils.config.TrutilsConfig;
 import com.github.b4ndithelps.menus.LeaderboardScreen;
 import com.github.b4ndithelps.menus.RaceSlotMachineScreen;
 import com.github.b4ndithelps.menus.ModMenus;
@@ -16,6 +17,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -35,6 +38,9 @@ public class Trutils {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
         ModMenus.register(modEventBus);
+
+        // Register config
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, TrutilsConfig.COMMON_SPEC);
 
 
 

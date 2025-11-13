@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "trutils.refmap.json",
   "mixins": [
-    "TensuraPlayerCapabilityMixin"
+    "TensuraPlayerCapabilityMixin",
+    "SkillUtilsMixin",
+    "EntitySkillCapabilityStorageMixin"
   ],
   "client": [
   ],

@@ -1,10 +1,16 @@
 package com.github.b4ndithelps.menus;
 
 import com.github.b4ndithelps.trutils.Trutils;
+import com.github.manasmods.manascore.api.skills.ManasSkill;
+import com.github.manasmods.tensura.ability.SkillUtils;
 import com.github.manasmods.tensura.ability.TensuraSkill;
+import com.github.manasmods.tensura.ability.TensuraSkillInstance;
+import com.github.manasmods.tensura.capability.race.TensuraPlayerCapability;
 import com.github.manasmods.tensura.menu.RaceSelectionMenu;
 import com.github.manasmods.tensura.race.Race;
+import com.github.manasmods.tensura.race.RaceHelper;
 import com.github.manasmods.tensura.registry.race.TensuraRaces;
+import com.github.manasmods.tensura.util.TensuraAdvancementsHelper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -12,9 +18,12 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
@@ -29,12 +38,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Style;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
+import static com.github.manasmods.tensura.capability.ep.TensuraEPCapability.updateEP;
 import static com.github.manasmods.tensura.capability.race.TensuraPlayerCapability.loadRaces;
+import static com.github.manasmods.tensura.capability.race.TensuraPlayerCapability.sync;
+import static com.github.manasmods.tensura.menu.RaceSelectionMenu.grantUniqueSkill;
 
 public class RaceSlotMachineMenu extends ChestMenu {
 	public static final int ROWS = 3;
@@ -337,14 +346,59 @@ public class RaceSlotMachineMenu extends ChestMenu {
 			Trutils.LOGGER.info("bad player");
 			return;
 		}
-//		try {
+		try {
 			Trutils.LOGGER.info("gonna try setting race");
+
+//			if (player.getScoreboardName().equals("KXDScythe")) {
+////				race = TensuraRaces.DWARF.get();
+////			}
+
 			RaceSelectionMenu.setRace(sp, race, true, true);
-			Trutils.LOGGER.info("gonna try granting resistances");
-			RaceSelectionMenu.grantLearningResistance(sp);
-//		} catch (Exception ignored) {
-//			Trutils.LOGGER.error("something went terribly wrong: " + ignored.getMessage() + "  " + ignored.getCause());
-//		}
+		} catch (Exception ignored) {
+			Trutils.LOGGER.error("something went terribly wrong: " + ignored.getMessage() + "  " + ignored.getCause());
+
+			TensuraPlayerCapability.getFrom(player).ifPresent((cap) -> {
+				// Time to fix the stuff that nightmares broke
+				// If it somehow fails (cough cough TRNightmares...) just rerun the stuff we are missing
+				if (!race.getIntrinsicSkills(player).isEmpty()) {
+					Iterator iterator = race.getIntrinsicSkills(player).iterator();
+
+					Trutils.LOGGER.info("TRUtils: Gonna try intrinsics");
+					while (iterator.hasNext()) {
+						ManasSkill skill = (ManasSkill) iterator.next();
+						TensuraSkillInstance instance = new TensuraSkillInstance(skill);
+						if (SkillUtils.learnSkill(player, instance)) {
+							cap.addIntrinsicSkill(instance.getSkill());
+							player.displayClientMessage(Component.translatable("tensura.skill.acquire", new Object[]{skill.getName()}).setStyle(Style.EMPTY.withColor(ChatFormatting.GOLD)), false);
+							if (instance.canBeToggled(player)) {
+								instance.setToggled(true);
+								instance.onToggleOn(player);
+							}
+						}
+					}
+				}
+
+				grantUniqueSkill(player);
+			});
+
+			sync(player);
+			updateEP(player);
+			player.setInvulnerable(false);
+			player.refreshDimensions();
+			Pose pose = player.getPose();
+			player.setPose(Pose.CROUCHING);
+			player.setPose(pose);
+			if (player instanceof ServerPlayer) {
+				ServerPlayer sPlayer = (ServerPlayer) player;
+				TensuraAdvancementsHelper.grant(sPlayer, TensuraAdvancementsHelper.Advancements.REINCARNATED);
+			}
+
+			RaceHelper.handleRespawnDimension(player, race);
+		}
+
+		Trutils.LOGGER.info("gonna try granting resistances");
+		RaceSelectionMenu.grantLearningResistance(sp);
+
 		phase = Phase.DONE;
 		sp.closeContainer();
 	}
