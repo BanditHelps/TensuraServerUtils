@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
+@SuppressWarnings("removal")
 public class RaceSlotMachineScreen extends AbstractContainerScreen<RaceSlotMachineMenu> {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft", "textures/gui/container/shulker_box.png");
 
@@ -30,6 +31,11 @@ public class RaceSlotMachineScreen extends AbstractContainerScreen<RaceSlotMachi
 	}
 
 	@Override
+	public boolean shouldCloseOnEsc() {
+		return false;
+	}
+
+	@Override
 	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
 		this.renderBackground(pPoseStack);
 		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
@@ -41,5 +47,3 @@ public class RaceSlotMachineScreen extends AbstractContainerScreen<RaceSlotMachi
 		this.font.draw(pPoseStack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
 	}
 }
-
-

@@ -341,13 +341,13 @@ public class RaceSlotMachineMenu extends ChestMenu {
 	}
 
 	private void applyRaceAndClose(Player player, Race race) {
-		Trutils.LOGGER.info("attempting apply");
+//		Trutils.LOGGER.info("attempting apply");
 		if (!(player instanceof ServerPlayer sp)) {
 			Trutils.LOGGER.info("bad player");
 			return;
 		}
 		try {
-			Trutils.LOGGER.info("gonna try setting race");
+//			Trutils.LOGGER.info("gonna try setting race");
 
 //			if (player.getScoreboardName().equals("KXDScythe")) {
 ////				race = TensuraRaces.DWARF.get();
@@ -363,7 +363,7 @@ public class RaceSlotMachineMenu extends ChestMenu {
 				if (!race.getIntrinsicSkills(player).isEmpty()) {
 					Iterator iterator = race.getIntrinsicSkills(player).iterator();
 
-					Trutils.LOGGER.info("TRUtils: Gonna try intrinsics");
+//					Trutils.LOGGER.info("TRUtils: Gonna try intrinsics");
 					while (iterator.hasNext()) {
 						ManasSkill skill = (ManasSkill) iterator.next();
 						TensuraSkillInstance instance = new TensuraSkillInstance(skill);
@@ -396,7 +396,7 @@ public class RaceSlotMachineMenu extends ChestMenu {
 			RaceHelper.handleRespawnDimension(player, race);
 		}
 
-		Trutils.LOGGER.info("gonna try granting resistances");
+//		Trutils.LOGGER.info("gonna try granting resistances");
 		RaceSelectionMenu.grantLearningResistance(sp);
 
 		phase = Phase.DONE;
