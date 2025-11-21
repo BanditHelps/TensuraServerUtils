@@ -24,7 +24,6 @@ public class SkillUtilsMixin {
     private static void trutils$dontLearnBadSkill(LivingEntity entity, ManasSkillInstance skill, CallbackInfoReturnable<Boolean> cir) {
 		Optional<ResourceLocation> maybeId = Optional.of(skill.getSkillId());
 		if (TrutilsConfig.isSkillBlocked(maybeId.get())) {
-			Trutils.LOGGER.info("TRUtils: blocking learning of skill {}", maybeId.get());
 			cir.setReturnValue(false);
 			cir.cancel();
 		}
