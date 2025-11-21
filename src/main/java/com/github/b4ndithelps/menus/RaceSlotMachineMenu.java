@@ -18,12 +18,10 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
@@ -34,7 +32,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Style;
 
@@ -79,6 +76,8 @@ public class RaceSlotMachineMenu extends ChestMenu {
 	private Race finalRace1;
 	private Race finalRace2;
 
+	private boolean isFullReset;
+
 	// Border animation order (exclude 22 which is our Start/Status slot)
 	// Expands from bottom center outward, then up sides, then across top to meet at center (4)
 	private static final int[] BORDER_PATH = new int[] {
@@ -96,12 +95,13 @@ public class RaceSlotMachineMenu extends ChestMenu {
 	}
 
 	// Server-side constructor
-	public RaceSlotMachineMenu(int id, Inventory playerInventory, Container container, Component title, ServerPlayer owner) {
+	public RaceSlotMachineMenu(int id, Inventory playerInventory, Container container, Component title, ServerPlayer owner, boolean fullReset) {
 		super(ModMenus.RACE_SLOT_MACHINE_MENU.get(), id, playerInventory, container, ROWS);
 		this.container = container;
 		this.title = title;
 		this.availableRaces = loadAvailableRaces();
 		this.owner = owner;
+		this.isFullReset = fullReset;
 		populateIdle();
 		RaceSlotMachineTicker.track(this);
 	}
@@ -341,19 +341,13 @@ public class RaceSlotMachineMenu extends ChestMenu {
 	}
 
 	private void applyRaceAndClose(Player player, Race race) {
-//		Trutils.LOGGER.info("attempting apply");
 		if (!(player instanceof ServerPlayer sp)) {
 			Trutils.LOGGER.info("bad player");
 			return;
 		}
 		try {
-//			Trutils.LOGGER.info("gonna try setting race");
 
-//			if (player.getScoreboardName().equals("KXDScythe")) {
-////				race = TensuraRaces.DWARF.get();
-////			}
-
-			RaceSelectionMenu.setRace(sp, race, true, true);
+			RaceSelectionMenu.setRace(sp, race, true, isFullReset);
 		} catch (Exception ignored) {
 			Trutils.LOGGER.error("something went terribly wrong: " + ignored.getMessage() + "  " + ignored.getCause());
 
@@ -363,7 +357,6 @@ public class RaceSlotMachineMenu extends ChestMenu {
 				if (!race.getIntrinsicSkills(player).isEmpty()) {
 					Iterator iterator = race.getIntrinsicSkills(player).iterator();
 
-//					Trutils.LOGGER.info("TRUtils: Gonna try intrinsics");
 					while (iterator.hasNext()) {
 						ManasSkill skill = (ManasSkill) iterator.next();
 						TensuraSkillInstance instance = new TensuraSkillInstance(skill);
@@ -395,7 +388,7 @@ public class RaceSlotMachineMenu extends ChestMenu {
 
 			RaceHelper.handleRespawnDimension(player, race);
 		}
-		
+
 		RaceSelectionMenu.grantLearningResistance(sp);
 		player.setInvulnerable(false);
 

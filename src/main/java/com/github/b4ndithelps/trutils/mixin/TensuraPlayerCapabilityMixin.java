@@ -54,7 +54,7 @@ public class TensuraPlayerCapabilityMixin {
 
 									@Override
 									public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player p) {
-										return new RaceSlotMachineMenu(id, playerInventory, new SimpleContainer(RaceSlotMachineMenu.SIZE), getDisplayName(), player);
+										return new RaceSlotMachineMenu(id, playerInventory, new SimpleContainer(RaceSlotMachineMenu.SIZE), getDisplayName(), player, true);
 									}
 								};
 								player.setInvulnerable(true);
