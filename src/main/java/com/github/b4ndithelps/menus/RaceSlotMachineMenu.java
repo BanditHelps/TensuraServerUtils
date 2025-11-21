@@ -395,9 +395,9 @@ public class RaceSlotMachineMenu extends ChestMenu {
 
 			RaceHelper.handleRespawnDimension(player, race);
 		}
-
-//		Trutils.LOGGER.info("gonna try granting resistances");
+		
 		RaceSelectionMenu.grantLearningResistance(sp);
+		player.setInvulnerable(false);
 
 		phase = Phase.DONE;
 		sp.closeContainer();

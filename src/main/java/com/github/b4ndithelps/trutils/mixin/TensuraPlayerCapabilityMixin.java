@@ -57,6 +57,7 @@ public class TensuraPlayerCapabilityMixin {
 										return new RaceSlotMachineMenu(id, playerInventory, new SimpleContainer(RaceSlotMachineMenu.SIZE), getDisplayName(), player);
 									}
 								};
+								player.setInvulnerable(true);
 								player.openMenu(provider);
 							} catch (Exception e) {
 								Trutils.LOGGER.error("Error in showing player the gacha screen!" + e.getMessage());
