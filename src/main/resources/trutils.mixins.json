@@ -8,7 +8,8 @@
     "TensuraPlayerCapabilityMixin",
     "SkillUtilsMixin",
     "EntitySkillCapabilityStorageMixin",
-    "ResetScrollItemMixin"
+    "ResetScrollItemMixin",
+    "EngravingEnchantmentMixin"
   ],
   "client": [
   ],
