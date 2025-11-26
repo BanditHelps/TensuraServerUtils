@@ -24,7 +24,7 @@ public class EntitySkillCapabilityStorageMixin {
     private void trutils$maybeCancelLearnSkill(ManasSkillInstance instance, CallbackInfoReturnable<Boolean> cir) {
         Optional<ResourceLocation> maybeId = Optional.of(instance.getSkillId());
         if (TrutilsConfig.isSkillBlocked(maybeId.get())) {
-            Trutils.LOGGER.info("TRUtils: blocking learning of skill {}", maybeId.get());
+//            Trutils.LOGGER.info("TRUtils: blocking learning of skill {}", maybeId.get());
             cir.setReturnValue(false);
             cir.cancel();
         }
