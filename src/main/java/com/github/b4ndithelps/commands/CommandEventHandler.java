@@ -11,5 +11,6 @@ public class CommandEventHandler {
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         LeaderboardCommand.register(event.getDispatcher());
 		RaceGachaCommand.register(event.getDispatcher());
+		SkillBypassCommand.register(event.getDispatcher());
     }
 }
