@@ -30,13 +30,14 @@ public class LeaderboardSavedData extends SavedData {
 			CompoundTag e = (CompoundTag) t;
 			try {
 				UUID uuid = e.hasUUID("uuid") ? e.getUUID("uuid") : UUID.fromString(e.getString("uuid_str"));
-				String name = e.getString("name");
+				String playerName = e.getString("playerName");
+				String tensuraName = e.getString("name");
 				double ep = e.getDouble("ep");
 				String race = e.getString("race");
 				int uniqueCount = e.getInt("uniqueCount");
 				boolean isDemonLord = e.getBoolean("isDemonLord");
 				boolean isTrueHero = e.getBoolean("isTrueHero");
-				data.records.put(uuid, new PlayerRecord(name, ep, race, uniqueCount, isDemonLord, isTrueHero));
+				data.records.put(uuid, new PlayerRecord(playerName, tensuraName, ep, race, uniqueCount, isDemonLord, isTrueHero));
 			} catch (Exception ignored) {
 			}
 		}
@@ -48,8 +49,9 @@ public class LeaderboardSavedData extends SavedData {
 		ListTag list = new ListTag();
 		for (Map.Entry<UUID, PlayerRecord> entry : records.entrySet()) {
 			CompoundTag e = new CompoundTag();
+			e.putString("playerName", entry.getValue().playerName);
 			e.putUUID("uuid", entry.getKey());
-			e.putString("name", entry.getValue().name);
+			e.putString("name", entry.getValue().tensuraName);
 			e.putDouble("ep", entry.getValue().ep);
 			e.putString("race", entry.getValue().race);
 			e.putInt("uniqueCount", entry.getValue().uniqueCount);
@@ -75,7 +77,7 @@ public class LeaderboardSavedData extends SavedData {
 			for (Map.Entry<UUID, LeaderboardMenu.Entry> e : cache.entrySet()) {
 				PlayerRecord rec = records.get(e.getKey());
 				if (rec == null) { changed = true; break; }
-				if (!rec.name.equals(e.getValue().name) || Double.compare(rec.ep, e.getValue().ep) != 0) {
+				if (!rec.tensuraName.equals(e.getValue().tensuraName) || Double.compare(rec.ep, e.getValue().ep) != 0) {
 					changed = true;
 					break;
 				}
@@ -86,21 +88,23 @@ public class LeaderboardSavedData extends SavedData {
 
 		this.records.clear();
 		for (Map.Entry<UUID, LeaderboardMenu.Entry> e : cache.entrySet()) {
-			this.records.put(e.getKey(), new PlayerRecord(e.getValue().name, e.getValue().ep, e.getValue().race, e.getValue().uniqueCount, e.getValue().isDemonLord, e.getValue().isTrueHero));
+			this.records.put(e.getKey(), new PlayerRecord(e.getValue().playerName, e.getValue().tensuraName, e.getValue().ep, e.getValue().race, e.getValue().uniqueCount, e.getValue().isDemonLord, e.getValue().isTrueHero));
 		}
 		setDirty();
 	}
 
 	public static class PlayerRecord {
-		public final String name;
+		public final String playerName;
+		public final String tensuraName;
 		public final double ep;
 		public final String race;
 		public final int uniqueCount;
 		public final boolean isDemonLord;
 		public final boolean isTrueHero;
 
-		public PlayerRecord(String name, double ep, String race, int uniqueCount, boolean isDemonLord, boolean isTrueHero) {
-			this.name = name;
+		public PlayerRecord(String playerName, String tensuraName, double ep, String race, int uniqueCount, boolean isDemonLord, boolean isTrueHero) {
+			this.playerName = playerName;
+			this.tensuraName = tensuraName;
 			this.ep = ep;
 			this.race = race;
 			this.uniqueCount = uniqueCount;

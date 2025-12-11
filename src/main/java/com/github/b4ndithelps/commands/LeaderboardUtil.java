@@ -16,18 +16,16 @@ public class LeaderboardUtil {
 		// Display name with place
 		Component name;
 		if (entry.isDemonLord) {
-			name = Component.literal("#" + place + " " + entry.name).withStyle(ChatFormatting.DARK_PURPLE);
+			name = Component.literal("#" + place + " " + entry.tensuraName).withStyle(ChatFormatting.DARK_PURPLE);
 		} else if (entry.isTrueHero) {
-			name = Component.literal("#" + place + " " + entry.name).withStyle(ChatFormatting.GOLD);
+			name = Component.literal("#" + place + " " + entry.tensuraName).withStyle(ChatFormatting.GOLD);
 		} else {
-			name = Component.literal("#" + place + " " + entry.name).withStyle(ChatFormatting.YELLOW);
+			name = Component.literal("#" + place + " " + entry.tensuraName).withStyle(ChatFormatting.YELLOW);
 		}
 		stack.setHoverName(name);
 		// Owner (by name if available)
 		CompoundTag tag = stack.getOrCreateTag();
-		if (entry.name != null && !entry.name.isEmpty()) {
-			tag.putString("SkullOwner", entry.name);
-		}
+		tag.putString("SkullOwner", entry.playerName);
 		// Lore with EP
 		CompoundTag display = stack.getOrCreateTagElement("display");
 		ListTag lore = new ListTag();

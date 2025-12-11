@@ -154,7 +154,8 @@ public class LeaderboardMenu extends ChestMenu {
 	}
 
 	public static class Entry {
-		public final String name;
+		public final String playerName;
+		public final String tensuraName;
 		public final UUID uuid;
 		public final double ep;
 		public final String race;
@@ -162,8 +163,9 @@ public class LeaderboardMenu extends ChestMenu {
 		public final boolean isDemonLord;
 		public final boolean isTrueHero;
 
-		public Entry(String name, UUID uuid, double ep, String race, int uniqueCount, boolean isDemonLord, boolean isTrueHero) {
-			this.name = name;
+		public Entry(String playerName, String tensuraName, UUID uuid, double ep, String race, int uniqueCount, boolean isDemonLord, boolean isTrueHero) {
+			this.playerName = playerName;
+			this.tensuraName = tensuraName;
 			this.uuid = uuid;
 			this.ep = ep;
 			this.race = race;

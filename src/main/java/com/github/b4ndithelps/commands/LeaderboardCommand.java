@@ -80,7 +80,7 @@ public class LeaderboardCommand {
 					// Check to see if they are "named" if so, use that name, otherwise their default player name
 					String name = TensuraEPCapability.getFrom(p).map(ITensuraEPCapability::getName).orElse(p.getGameProfile().getName());
 
-					entries.add(new LeaderboardMenu.Entry(name, p.getUUID(), ep, raceName, uniqueCount, isDemonLord, isTrueHero));
+					entries.add(new LeaderboardMenu.Entry(p.getGameProfile().getName(), name, p.getUUID(), ep, raceName, uniqueCount, isDemonLord, isTrueHero));
 				}
 			}
 
@@ -102,7 +102,7 @@ public class LeaderboardCommand {
 				double ep = Math.max(1, (count - i + 1) * 1000L);
 				String name = "Player" + i;
 				String race = Component.translatable(TensuraRaces.HUMAN.get().getNameTranslationKey()).getString();
-				entries.add(new LeaderboardMenu.Entry(name, new UUID(0L, i), ep, race, 0, false, false));
+				entries.add(new LeaderboardMenu.Entry(name, name, new UUID(0L, i), ep, race, 0, false, false));
 			}
 			entries.sort(Comparator.comparingDouble((LeaderboardMenu.Entry e) -> e.ep).reversed());
 			openMenu(sender, entries);

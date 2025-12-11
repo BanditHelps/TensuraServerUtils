@@ -39,7 +39,7 @@ public class LeaderboardCache {
 		LeaderboardSavedData data = LeaderboardSavedData.get(overworld);
 		uuidToEntry.clear();
 		for (Map.Entry<UUID, LeaderboardSavedData.PlayerRecord> e : data.getRecords().entrySet()) {
-			uuidToEntry.put(e.getKey(), new LeaderboardMenu.Entry(e.getValue().name, e.getKey(), e.getValue().ep, e.getValue().race, e.getValue().uniqueCount, e.getValue().isDemonLord, e.getValue().isTrueHero));
+			uuidToEntry.put(e.getKey(), new LeaderboardMenu.Entry(e.getValue().playerName, e.getValue().tensuraName, e.getKey(), e.getValue().ep, e.getValue().race, e.getValue().uniqueCount, e.getValue().isDemonLord, e.getValue().isTrueHero));
 		}
 	}
 
@@ -57,7 +57,7 @@ public class LeaderboardCache {
 	public static void putTestEntry(String name, double ep) {
 		UUID uuid = UUID.nameUUIDFromBytes(("trutils-test:" + name).getBytes(StandardCharsets.UTF_8));
 		String race = Component.translatable(TensuraRaces.HUMAN.get().getNameTranslationKey()).getString();
-		uuidToEntry.put(uuid, new LeaderboardMenu.Entry(name, uuid, ep, race, 0, false, false));
+		uuidToEntry.put(uuid, new LeaderboardMenu.Entry(name, name, uuid, ep, race, 0, false, false));
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class LeaderboardCache {
 					name = p.getGameProfile().getName();
 				}
 
-				uuidToEntry.put(p.getUUID(), new LeaderboardMenu.Entry(name, p.getUUID(), ep, raceName, uniqueCount, isDemonLord, isTrueHero));
+				uuidToEntry.put(p.getUUID(), new LeaderboardMenu.Entry(p.getGameProfile().getName(), name, p.getUUID(), ep, raceName, uniqueCount, isDemonLord, isTrueHero));
 			} catch (Exception e) {
 				Trutils.LOGGER.warn("One of the following failed: ", e.getMessage());
 				return;
